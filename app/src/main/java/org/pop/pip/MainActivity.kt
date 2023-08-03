@@ -4,9 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,9 +28,11 @@ class MainActivity : ComponentActivity() {
 fun TopUi() {
     PopAndPipTheme {
         val navController = rememberNavController()
-        NavHost(navController = navController, startDestination = "login") {
-            composable("login") { LoginPage(navController) }
-            composable("context") { SecondPage(navController) }
+        Scaffold(bottomBar = { PopAndPipBottomBar(listOf("login", "context"), navController) }) {
+            NavHost(navController = navController, startDestination = "login") {
+                composable("login") { LoginPage(navController) }
+                composable("context") { SecondPage(navController) }
+            }
         }
     }
 }
@@ -44,6 +50,26 @@ fun LoginPage(navController: NavController) {
 }
 
 @Composable
+fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
+
+    var selectedItem by remember { mutableIntStateOf(0) }
+
+    NavigationBar {
+        list.forEachIndexed { index, item ->
+            NavigationBarItem(
+                    icon = { Icon(Icons.Filled.Favorite, contentDescription = item) },
+                    label = { Text(item) },
+                    selected = selectedItem == index,
+                    onClick = {
+                        selectedItem = index
+                        navController.navigate(item)
+                    }
+            )
+        }
+    }
+}
+
+@Composable
 fun SecondPage(navController: NavController) {
     var name = "eeee"
     Column {
@@ -53,10 +79,4 @@ fun SecondPage(navController: NavController) {
         Text("$name is ")
         Text("$name is ")
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PopAndPipTheme {}
 }
