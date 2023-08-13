@@ -28,22 +28,32 @@ class MainActivity : ComponentActivity() {
 fun TopUi() {
     PopAndPipTheme {
         val navController = rememberNavController()
-        Scaffold(bottomBar = { PopAndPipBottomBar(listOf("login", "context"), navController) }) {
+        Scaffold(
+                floatingActionButton = { FloatActionBtn() },
+                bottomBar = { PopAndPipBottomBar(listOf("login", "context"), navController) }
+        ) {
             NavHost(navController = navController, startDestination = "login") {
-                composable("login") { LoginPage(navController) }
-                composable("context") { SecondPage(navController) }
+                composable("login") { LoginPage() }
+                composable("context") { SecondPage() }
             }
         }
     }
 }
 
 @Composable
-fun LoginPage(navController: NavController) {
+fun FloatActionBtn() {
+    ExtendedFloatingActionButton(
+            onClick = { println("ss") },
+            icon = { Icon(Icons.Filled.Favorite, "Localized description") },
+            text = { Text(text = "Extended FAB") },
+    )
+}
+
+@Composable
+fun LoginPage() {
     var name = "sssss"
     Column {
         Text("$name is ")
-        Text("$name is ")
-        Button(onClick = { navController.navigate("context") }) { Text("To Second One") }
         Text("$name is ")
         Text("$name is ")
     }
@@ -70,12 +80,11 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
 }
 
 @Composable
-fun SecondPage(navController: NavController) {
+fun SecondPage() {
     var name = "eeee"
     Column {
         Text("$name is ")
         Text("$name is ")
-        Button(onClick = { navController.navigate("login") }) { Text("to Main Screen") }
         Text("$name is ")
         Text("$name is ")
     }
