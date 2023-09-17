@@ -31,7 +31,7 @@ fun TopUi() {
         Scaffold(
                 floatingActionButton = { FloatActionBtn() },
                 bottomBar = { PopAndPipBottomBar(listOf("login", "context"), navController) }
-        ) {
+        ) { _ ->
             NavHost(navController = navController, startDestination = "login") {
                 composable("login") { LoginPage() }
                 composable("context") { SecondPage() }
@@ -51,7 +51,7 @@ fun FloatActionBtn() {
 
 @Composable
 fun LoginPage() {
-    var name = "sssss"
+    val name = "sssss"
     Column {
         Text("$name is ")
         Text("$name is ")
@@ -81,7 +81,7 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
 
 @Composable
 fun SecondPage() {
-    var name = "eeee"
+    val name = "eeee"
     Column {
         Text("$name is ")
         Text("$name is ")
