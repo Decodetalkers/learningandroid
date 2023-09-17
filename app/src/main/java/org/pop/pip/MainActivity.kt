@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
@@ -11,6 +13,8 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,9 +35,9 @@ fun TopUi() {
         Scaffold(
                 floatingActionButton = { FloatActionBtn() },
                 bottomBar = { PopAndPipBottomBar(listOf("login", "context"), navController) }
-        ) { _ ->
+        ) { padding ->
             NavHost(navController = navController, startDestination = "login") {
-                composable("login") { LoginPage() }
+                composable("login") { LoginPage(padding) }
                 composable("context") { SecondPage() }
             }
         }
@@ -50,9 +54,9 @@ fun FloatActionBtn() {
 }
 
 @Composable
-fun LoginPage() {
+fun LoginPage(dp: PaddingValues) {
     val name = "sssss"
-    Column {
+    Column(modifier = Modifier.padding(dp)) {
         Text("$name is ")
         Text("$name is ")
         Text("$name is ")
