@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -31,21 +33,47 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.pop.pip.ui.theme.PopAndPipTheme
 
+val LAZYLIST: List<Message> by lazy {
+    listOf(
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+            Message("aa", "bb"),
+    )
+}
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // setContent { TopUi() }
         setContent {
-            PopAndPipTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    MessageCard(Message("Android", "Jetpack Compose"))
-                }
-            }
+            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation(LAZYLIST) } }
         }
     }
 }
 
 data class Message(val author: String, val body: String)
+
+@Composable
+fun Conversation(message: List<Message>) {
+    LazyColumn { items(message) { message -> MessageCard(message) } }
+}
 
 @Composable
 fun MessageCard(msg: Message) {
