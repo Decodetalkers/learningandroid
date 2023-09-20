@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -35,26 +37,26 @@ import org.pop.pip.ui.theme.PopAndPipTheme
 
 val LAZYLIST: List<Message> by lazy {
     listOf(
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
-            Message("aa", "bb"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
+            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
     )
 }
 
@@ -72,12 +74,49 @@ data class Message(val author: String, val body: String)
 
 @Composable
 fun Conversation(message: List<Message>) {
-    LazyColumn { items(message) { message -> MessageCard(message) } }
+    LazyColumn {
+        itemsIndexed(message) { index, message ->
+            if (index % 2 == 0) MessageCardL(message) else MessageCardR(message)
+        }
+    }
 }
 
 @Composable
-fun MessageCard(msg: Message) {
-    Row(modifier = Modifier.padding(all = 8.dp)) {
+fun MessageCardR(msg: Message) {
+    Row(
+            modifier = Modifier.padding(all = 8.dp).fillMaxSize(),
+            horizontalArrangement = Arrangement.End,
+    ) {
+        Column {
+            Text(
+                    textAlign = TextAlign.End,
+                    text = msg.author,
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleSmall
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp) {
+                Text(
+                        text = msg.body,
+                        modifier = Modifier.padding(all = 4.dp),
+                        style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Image(
+                painter = painterResource(R.drawable.lala),
+                contentDescription = "contentDescription",
+                modifier = Modifier.size(40.dp).clip(CircleShape)
+        )
+    }
+}
+
+@Composable
+fun MessageCardL(msg: Message) {
+    Row(
+            modifier = Modifier.padding(all = 8.dp).fillMaxSize(),
+    ) {
         Image(
                 painter = painterResource(R.drawable.lala),
                 contentDescription = "contentDescription",
