@@ -3,20 +3,6 @@ package org.pop.pip.aur
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 
-@Serializable data class Project(val name: String, val language: String)
-
-public fun runData() {
-    val data = Project("kotlinx.serialization", "kotlin")
-
-    val string = Json.encodeToString(data)
-
-    println(string)
-
-    val obj = Json.decodeFromString<Project>(string)
-
-    println(obj)
-}
-
 @Serializable
 public data class AurResult(
         val ID: Int,
