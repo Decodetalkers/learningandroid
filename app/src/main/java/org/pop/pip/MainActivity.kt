@@ -23,7 +23,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +33,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.pop.pip.aur.Resource
+import org.pop.pip.data.HttpViewmodel
 import org.pop.pip.ui.components.searchBar
 import org.pop.pip.ui.theme.PopAndPipTheme
 
@@ -76,8 +77,22 @@ data class Message(val author: String, val body: String)
 
 @Composable
 fun Conversation(message: List<Message>) {
+    val model = HttpViewmodel()
+    val state by model.state
     LazyColumn {
-        item { searchBar() }
+        item {
+            Text(
+                    text =
+                            when (val stateSmartCast = state) {
+                                is Resource.Failure -> "Failure"
+                                Resource.Loading -> "Loading"
+                                Resource.Begin -> "Loading"
+                                //is Resource.Success -> "Success ${stateSmartCast.data}"
+                                is Resource.Success -> "Success"
+                            }
+            )
+        }
+        item { searchBar(onSearch = { input -> model.searchPackage(input) }) }
         itemsIndexed(message) { index, message ->
             if (index % 2 == 0) MessageCardL(message) else MessageCardR(message)
         }
