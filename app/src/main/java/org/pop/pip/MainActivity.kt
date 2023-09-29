@@ -23,6 +23,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,6 +34,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.pop.pip.ui.components.searchBar
 import org.pop.pip.ui.theme.PopAndPipTheme
 
 val LAZYLIST: List<Message> by lazy {
@@ -75,6 +77,7 @@ data class Message(val author: String, val body: String)
 @Composable
 fun Conversation(message: List<Message>) {
     LazyColumn {
+        item { searchBar() }
         itemsIndexed(message) { index, message ->
             if (index % 2 == 0) MessageCardL(message) else MessageCardR(message)
         }
