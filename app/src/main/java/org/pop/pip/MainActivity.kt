@@ -83,7 +83,7 @@ fun Conversation(message: List<Message>) {
         item {
             Text(
                     text =
-                            when (val stateSmartCast = state) {
+                            when (state) {
                                 is Resource.Failure -> "Failure"
                                 Resource.Loading -> "Loading"
                                 Resource.Begin -> "Loading"
