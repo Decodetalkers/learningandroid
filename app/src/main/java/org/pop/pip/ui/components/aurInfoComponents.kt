@@ -11,12 +11,14 @@ import org.pop.pip.aur.AurResult
 
 @Composable
 fun AurResultCard(data: AurResult) {
-    Column(modifier = Modifier.padding(all = 8.dp).fillMaxSize()) {
-        Text(
-                text = data.Name,
-                color = MaterialTheme.colorScheme.primary,
-        )
-        Text(text = data.URLPath)
+    Card {
+        Column(modifier = Modifier.padding(all = 8.dp).fillMaxSize()) {
+            Text(
+                    text = data.Name,
+                    color = MaterialTheme.colorScheme.primary,
+            )
+            Text(text = data.URLPath)
+        }
     }
 }
 

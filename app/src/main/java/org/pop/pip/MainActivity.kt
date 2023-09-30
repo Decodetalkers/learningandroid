@@ -54,7 +54,9 @@ data class Message(val author: String, val body: String)
 fun Conversation() {
     val model = HttpViewModel()
     val state by model.state
-    LazyColumn {
+    LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
         item { PackageSearchBar(onSearch = { input -> model.searchPackage(input) }) }
         when (val smartCastData = state) {
             is Resource.Success ->
