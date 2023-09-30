@@ -54,18 +54,20 @@ data class Message(val author: String, val body: String)
 fun Conversation() {
     val model = HttpViewModel()
     val state by model.state
-    LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
-    ) {
-        item { PackageSearchBar(onSearch = { input -> model.searchPackage(input) }) }
-        when (val smartCastData = state) {
-            is Resource.Success ->
-                    if (smartCastData.data.error != null) {
-                        item { AurCardError(smartCastData.data.error) }
-                    } else {
-                        items(smartCastData.data.results) { message -> AurResultCard(message) }
-                    }
-            else -> item { Text(text = "Loading") }
+    Column {
+        PackageSearchBar(onSearch = { input -> model.searchPackage(input) })
+        LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            when (val smartCastData = state) {
+                is Resource.Success ->
+                        if (smartCastData.data.error != null) {
+                            item { AurCardError(smartCastData.data.error) }
+                        } else {
+                            items(smartCastData.data.results) { message -> AurResultCard(message) }
+                        }
+                else -> item { Text(text = "Loading") }
+            }
         }
     }
 }

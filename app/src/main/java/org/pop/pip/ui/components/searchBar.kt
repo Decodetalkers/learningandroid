@@ -1,6 +1,6 @@
 package org.pop.pip.ui.components
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme.colorScheme
@@ -24,7 +24,7 @@ public fun PackageSearchBar(onSearch: (String) -> Unit = {}) {
             value = searchValue,
             singleLine = true,
             shape = shapes.large,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxWidth(),
             onValueChange = { value -> searchValue = value },
             colors =
                     TextFieldDefaults.colors(
