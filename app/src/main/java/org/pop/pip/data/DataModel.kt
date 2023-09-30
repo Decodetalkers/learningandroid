@@ -1,5 +1,6 @@
 package org.pop.pip.data
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +22,12 @@ private val client = OkHttpClient()
 class HttpViewModel : ViewModel() {
     val state = mutableStateOf<Resource<AurInfo>>(Resource.Begin)
     fun searchPackage(packageName: String) {
+        if (packageName.isEmpty()) {
+            state.value = Resource.Begin
+            return
+        }
+        val thestate by state
+        if (thestate is Resource.Loading) return
         viewModelScope.launch {
             searchPackageInner(packageName).collect { response -> state.value = response }
         }
@@ -32,7 +39,6 @@ class HttpViewModel : ViewModel() {
                 .enqueue(
                         object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
-                                println("error")
                                 state.value = Resource.Failure("Unexpected code ${e}")
                             }
 
@@ -42,14 +48,10 @@ class HttpViewModel : ViewModel() {
                                     val bodys = response.body!!.string()
 
                                     val objs = Json.decodeFromString<AurInfo>(bodys)
-                                    println(objs)
                                     state.value = Resource.Success(objs)
-                                    // emit(Resource.Success(objs))
                                 }
                             }
                         }
                 )
-        // val result = RequestPackage(packageName)
-        // emit(result)
     }
 }

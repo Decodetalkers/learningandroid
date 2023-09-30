@@ -43,9 +43,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // setContent { TopUi() }
         setContent {
-            PopAndPipTheme {
-                Surface(modifier = Modifier.fillMaxSize()) { Conversation() }
-            }
+            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation() } }
         }
     }
 }
@@ -57,18 +55,6 @@ fun Conversation() {
     val model = HttpViewModel()
     val state by model.state
     LazyColumn {
-        item {
-            Text(
-                    text =
-                            when (state) {
-                                is Resource.Failure -> "Failure"
-                                Resource.Loading -> "Loading"
-                                Resource.Begin -> "Loading"
-                                is Resource.Success -> "Success"
-                            }
-            )
-        }
-
         item { PackageSearchBar(onSearch = { input -> model.searchPackage(input) }) }
         when (val smartCastData = state) {
             is Resource.Success ->

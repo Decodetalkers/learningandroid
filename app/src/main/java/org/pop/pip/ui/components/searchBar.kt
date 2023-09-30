@@ -18,7 +18,8 @@ import androidx.compose.ui.text.input.ImeAction
 
 @Composable
 public fun PackageSearchBar(onSearch: (String) -> Unit = {}) {
-    var searchValue by remember { mutableStateOf<String>("") }
+    var searchValue by remember { mutableStateOf<String>(String()) }
+    var oldValue by remember { mutableStateOf<String>(String()) }
     OutlinedTextField(
             value = searchValue,
             singleLine = true,
@@ -34,6 +35,13 @@ public fun PackageSearchBar(onSearch: (String) -> Unit = {}) {
             label = { Text(text = "input the package name") },
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
             isError = false,
-            keyboardActions = KeyboardActions(onDone = { onSearch(searchValue) })
+            keyboardActions =
+                    KeyboardActions(
+                            onDone = done@{
+                                        if (oldValue == searchValue) return@done
+                                        oldValue = searchValue
+                                        onSearch(searchValue)
+                                    }
+                    )
     )
 }

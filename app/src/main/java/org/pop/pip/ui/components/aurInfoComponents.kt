@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.pop.pip.aur.AurResult
 
@@ -17,7 +16,7 @@ fun AurResultCard(data: AurResult) {
                 text = data.Name,
                 color = MaterialTheme.colorScheme.primary,
         )
-        Text(text = data.URLPath, textAlign = TextAlign.End)
+        Text(text = data.URLPath)
     }
 }
 
