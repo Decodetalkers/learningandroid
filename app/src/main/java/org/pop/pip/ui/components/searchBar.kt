@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 
 @Composable
-public fun searchBar(onSearch: (String) -> Unit = {}) {
+public fun PackageSearchBar(onSearch: (String) -> Unit = {}) {
     var searchValue by remember { mutableStateOf<String>("") }
     OutlinedTextField(
             value = searchValue,

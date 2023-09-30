@@ -34,11 +34,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.pop.pip.aur.Resource
-import org.pop.pip.data.HttpViewmodel
-import org.pop.pip.ui.components.searchBar
+import org.pop.pip.data.HttpViewModel
+import org.pop.pip.ui.components.PackageSearchBar
 import org.pop.pip.ui.theme.PopAndPipTheme
 
-val LAZYLIST: List<Message> by lazy {
+val LAZY_LIST: List<Message> by lazy {
     listOf(
             Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
             Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         // setContent { TopUi() }
         setContent {
-            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation(LAZYLIST) } }
+            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation(LAZY_LIST) } }
         }
     }
 }
@@ -77,7 +77,7 @@ data class Message(val author: String, val body: String)
 
 @Composable
 fun Conversation(message: List<Message>) {
-    val model = HttpViewmodel()
+    val model = HttpViewModel()
     val state by model.state
     LazyColumn {
         item {
@@ -92,7 +92,7 @@ fun Conversation(message: List<Message>) {
                             }
             )
         }
-        item { searchBar(onSearch = { input -> model.searchPackage(input) }) }
+        item { PackageSearchBar(onSearch = { input -> model.searchPackage(input) }) }
         itemsIndexed(message) { index, message ->
             if (index % 2 == 0) MessageCardL(message) else MessageCardR(message)
         }

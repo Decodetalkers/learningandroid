@@ -18,14 +18,14 @@ import org.pop.pip.aur.Resource
 
 private val client = OkHttpClient()
 
-class HttpViewmodel : ViewModel() {
+class HttpViewModel : ViewModel() {
     val state = mutableStateOf<Resource<AurInfo>>(Resource.Begin)
     fun searchPackage(packageName: String) {
         viewModelScope.launch {
             searchPackageInner(packageName).collect { response -> state.value = response }
         }
     }
-    suspend fun searchPackageInner(packageName: String) = flow {
+    private suspend fun searchPackageInner(packageName: String) = flow {
         emit(Resource.Loading)
         val request = RequestPackage(packageName)
         client.newCall(request)
