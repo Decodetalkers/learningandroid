@@ -75,7 +75,14 @@ fun Conversation() {
                                     textAlign = TextAlign.Center
                             )
                         }
-                else -> item { Text(modifier = Modifier.fillMaxSize(), text = "Loading") }
+                else ->
+                        item {
+                            CircularProgressIndicator(
+                                    modifier = Modifier.fillMaxSize(),
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                    trackColor = MaterialTheme.colorScheme.secondary,
+                            )
+                        }
             }
         }
     }
