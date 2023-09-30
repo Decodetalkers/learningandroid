@@ -67,7 +67,15 @@ fun Conversation() {
                         } else {
                             items(smartCastData.data.results) { message -> AurResultCard(message) }
                         }
-                else -> item { Text(text = "Loading") }
+                Resource.Begin ->
+                        item {
+                            Text(
+                                    modifier = Modifier.fillMaxSize(),
+                                    text = "Begin",
+                                    textAlign = TextAlign.Center
+                            )
+                        }
+                else -> item { Text(modifier = Modifier.fillMaxSize(), text = "Loading") }
             }
         }
     }
