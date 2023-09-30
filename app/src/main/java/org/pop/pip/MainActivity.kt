@@ -57,6 +57,7 @@ fun Conversation() {
     Column {
         PackageSearchBar(onSearch = { input -> model.searchPackage(input) })
         LazyColumn(
+                modifier = Modifier.padding(4.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             when (val smartCastData = state) {
