@@ -15,15 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -33,42 +30,22 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.pop.pip.aur.*
 import org.pop.pip.aur.Resource
 import org.pop.pip.data.HttpViewModel
+import org.pop.pip.ui.components.AurCardError
+import org.pop.pip.ui.components.AurResultCard
 import org.pop.pip.ui.components.PackageSearchBar
 import org.pop.pip.ui.theme.PopAndPipTheme
-
-val LAZY_LIST: List<Message> by lazy {
-    listOf(
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-            Message("aa", "bbeeefffffffffffffffffffffffffffffffff"),
-    )
-}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // setContent { TopUi() }
         setContent {
-            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation(LAZY_LIST) } }
+            PopAndPipTheme {
+                Surface(modifier = Modifier.fillMaxSize()) { Conversation() }
+            }
         }
     }
 }
@@ -76,7 +53,7 @@ class MainActivity : ComponentActivity() {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun Conversation(message: List<Message>) {
+fun Conversation() {
     val model = HttpViewModel()
     val state by model.state
     LazyColumn {
@@ -87,14 +64,20 @@ fun Conversation(message: List<Message>) {
                                 is Resource.Failure -> "Failure"
                                 Resource.Loading -> "Loading"
                                 Resource.Begin -> "Loading"
-                                //is Resource.Success -> "Success ${stateSmartCast.data}"
                                 is Resource.Success -> "Success"
                             }
             )
         }
+
         item { PackageSearchBar(onSearch = { input -> model.searchPackage(input) }) }
-        itemsIndexed(message) { index, message ->
-            if (index % 2 == 0) MessageCardL(message) else MessageCardR(message)
+        when (val smartCastData = state) {
+            is Resource.Success ->
+                    if (smartCastData.data.error != null) {
+                        item { AurCardError(smartCastData.data.error) }
+                    } else {
+                        items(smartCastData.data.results) { message -> AurResultCard(message) }
+                    }
+            else -> item { Text(text = "Loading") }
         }
     }
 }
