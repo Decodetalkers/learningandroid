@@ -17,7 +17,7 @@ fun AurResultCard(data: AurResult) {
                     text = data.Name,
                     color = MaterialTheme.colorScheme.primary,
             )
-            Text(text = data.URLPath)
+            Text(text = if (data.URL != null) data.URL else "No Url Founded")
         }
     }
 }
