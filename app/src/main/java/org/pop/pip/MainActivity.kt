@@ -26,8 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -75,6 +77,14 @@ fun Conversation(viewModel: HttpViewModel = viewModel()) {
                                 verticalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
                             items(smartCastData.data.results) { message -> AurResultCard(message) }
+                            item {
+                                Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Above is all I can provide to you",
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 15.sp,
+                                )
+                            }
                         }
                     }
             is Resource.Failure ->
@@ -91,8 +101,10 @@ fun Conversation(viewModel: HttpViewModel = viewModel()) {
                     ) {
                         Text(
                                 modifier = Modifier.fillMaxWidth(),
-                                text = "Begin",
-                                textAlign = TextAlign.Center
+                                text = "Today is a good day, doesn't it?",
+                                textAlign = TextAlign.Center,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
                         )
                     }
             else ->
