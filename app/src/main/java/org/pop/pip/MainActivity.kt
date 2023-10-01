@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
@@ -56,7 +58,17 @@ fun Conversation(viewModel: HttpViewModel = viewModel()) {
         when (val smartCastData = state) {
             is Resource.Success ->
                     if (smartCastData.data.error != null) {
-                        AurCardError(smartCastData.data.error)
+                        Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            AurCardError(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    err = smartCastData.data.error,
+                                    textAlign = TextAlign.Center
+                            )
+                        }
                     } else {
                         LazyColumn(
                                 modifier = Modifier.padding(4.dp),
@@ -72,17 +84,28 @@ fun Conversation(viewModel: HttpViewModel = viewModel()) {
                             textAlign = TextAlign.Center
                     )
             Resource.Begin ->
-                    Text(
+                    Column(
                             modifier = Modifier.fillMaxSize(),
-                            text = "Begin",
-                            textAlign = TextAlign.Center
-                    )
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                                modifier = Modifier.fillMaxWidth(),
+                                text = "Begin",
+                                textAlign = TextAlign.Center
+                        )
+                    }
             else ->
-                    CircularProgressIndicator(
+                    Column(
                             modifier = Modifier.fillMaxSize(),
-                            color = MaterialTheme.colorScheme.surfaceVariant,
-                            trackColor = MaterialTheme.colorScheme.secondary,
-                    )
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(
+                                color = MaterialTheme.colorScheme.surfaceVariant,
+                                trackColor = MaterialTheme.colorScheme.secondary,
+                        )
+                    }
         }
     }
 }
