@@ -26,21 +26,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.pop.pip.aur.*
 import org.pop.pip.data.HttpViewModel
-import org.pop.pip.ui.components.AurCardError
-import org.pop.pip.ui.components.AurResultCard
-import org.pop.pip.ui.components.PackageSearchBar
+import org.pop.pip.ui.components.*
 import org.pop.pip.ui.theme.PopAndPipTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // setContent { TopUi() }
         setContent {
             PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation() } }
         }
@@ -50,38 +48,41 @@ class MainActivity : ComponentActivity() {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun Conversation(viewModel: HttpViewModel = HttpViewModel()) {
+fun Conversation(viewModel: HttpViewModel = viewModel()) {
     val state by viewModel.state
     Column {
         PackageSearchBar(onSearch = { input -> viewModel.searchPackage(input) })
-        LazyColumn(
-                modifier = Modifier.padding(4.dp),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            when (val smartCastData = state) {
-                is Resource.Success ->
-                        if (smartCastData.data.error != null) {
-                            item { AurCardError(smartCastData.data.error) }
-                        } else {
+
+        when (val smartCastData = state) {
+            is Resource.Success ->
+                    if (smartCastData.data.error != null) {
+                        AurCardError(smartCastData.data.error)
+                    } else {
+                        LazyColumn(
+                                modifier = Modifier.padding(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                        ) {
                             items(smartCastData.data.results) { message -> AurResultCard(message) }
                         }
-                Resource.Begin ->
-                        item {
-                            Text(
-                                    modifier = Modifier.fillMaxSize(),
-                                    text = "Begin",
-                                    textAlign = TextAlign.Center
-                            )
-                        }
-                else ->
-                        item {
-                            CircularProgressIndicator(
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.surfaceVariant,
-                                    trackColor = MaterialTheme.colorScheme.secondary,
-                            )
-                        }
-            }
+                    }
+            is Resource.Failure ->
+                    Text(
+                            modifier = Modifier.fillMaxSize(),
+                            text = smartCastData.message,
+                            textAlign = TextAlign.Center
+                    )
+            Resource.Begin ->
+                    Text(
+                            modifier = Modifier.fillMaxSize(),
+                            text = "Begin",
+                            textAlign = TextAlign.Center
+                    )
+            else ->
+                    CircularProgressIndicator(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            trackColor = MaterialTheme.colorScheme.secondary,
+                    )
         }
     }
 }
