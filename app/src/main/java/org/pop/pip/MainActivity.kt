@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,25 +41,61 @@ import org.pop.pip.ui.theme.PopAndPipTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { TopUi() } } }
+        setContent { PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { MainPage() } } }
     }
 }
 
 @Composable
-fun TopUi() {
+fun MainPage() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "main") {
+        composable("main") { TopUi(topNav = navController) }
+        composable("DetailPage") { DetailPage(navController = navController) }
+    }
+}
+
+@Composable
+fun DetailPage(dp: PaddingValues? = null, navController: NavController) {
+    val modifier =
+            Modifier.fillMaxSize().let done@{
+                if (dp == null) return@done it
+                it.padding(dp)
+            }
+    Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+                modifier = Modifier.clip(CircleShape),
+                painter = painterResource(R.drawable.lala),
+                contentDescription = "contentDescription",
+        )
+        Button(onClick = { navController.navigateUp() }) {}
+    }
+}
+
+@Composable
+fun TopUi(topNav: NavController) {
     val navController = rememberNavController()
     val viewModel: HttpViewModel = viewModel()
     Scaffold(bottomBar = { PopAndPipBottomBar(listOf("search", "about"), navController) }) { padding
         ->
         NavHost(navController = navController, startDestination = "search") {
-            composable("search") { SearchResultPage(viewModel = viewModel, dp = padding) }
+            composable("search") {
+                SearchResultPage(viewModel = viewModel, dp = padding, navController = topNav)
+            }
             composable("about") { AboutPage(dp = padding) }
         }
     }
 }
 
 @Composable
-fun SearchResultPage(viewModel: HttpViewModel = viewModel(), dp: PaddingValues? = null) {
+fun SearchResultPage(
+        viewModel: HttpViewModel = viewModel(),
+        dp: PaddingValues? = null,
+        navController: NavController
+) {
     val state by viewModel.state
     Column(
             modifier =
@@ -88,7 +125,17 @@ fun SearchResultPage(viewModel: HttpViewModel = viewModel(), dp: PaddingValues? 
                                 modifier = Modifier.padding(4.dp),
                                 verticalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
-                            items(smartCastData.data.results) { message -> AurResultCard(message) }
+                            items(smartCastData.data.results) { message ->
+                                AurResultCard(
+                                        data = message,
+                                        modifier =
+                                                Modifier.padding(all = 2.dp)
+                                                        .fillMaxSize()
+                                                        .clickable {
+                                                            navController.navigate("DetailPage")
+                                                        }
+                                )
+                            }
                             item { Spacer(modifier = Modifier.height(4.dp)) }
                             item {
                                 Text(

@@ -11,8 +11,8 @@ import androidx.compose.ui.unit.dp
 import org.pop.pip.aur.AurResult
 
 @Composable
-fun AurResultCard(data: AurResult) {
-    Card {
+fun AurResultCard(modifier : Modifier= Modifier,data: AurResult) {
+    Card(modifier = modifier) {
         Column(modifier = Modifier.padding(all = 8.dp).fillMaxSize()) {
             Text(
                     text = data.Name,
