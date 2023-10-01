@@ -31,7 +31,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.pop.pip.aur.*
-import org.pop.pip.aur.Resource
 import org.pop.pip.data.HttpViewModel
 import org.pop.pip.ui.components.AurCardError
 import org.pop.pip.ui.components.AurResultCard
@@ -51,11 +50,10 @@ class MainActivity : ComponentActivity() {
 data class Message(val author: String, val body: String)
 
 @Composable
-fun Conversation() {
-    val model = HttpViewModel()
-    val state by model.state
+fun Conversation(viewModel: HttpViewModel = HttpViewModel()) {
+    val state by viewModel.state
     Column {
-        PackageSearchBar(onSearch = { input -> model.searchPackage(input) })
+        PackageSearchBar(onSearch = { input -> viewModel.searchPackage(input) })
         LazyColumn(
                 modifier = Modifier.padding(4.dp),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
