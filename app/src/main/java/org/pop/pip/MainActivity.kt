@@ -64,10 +64,9 @@ fun SearchResultPage(viewModel: HttpViewModel = viewModel(), dp: PaddingValues? 
     val state by viewModel.state
     Column(
             modifier =
-                    if (dp == null) {
-                        Modifier
-                    } else {
-                        Modifier.padding(dp)
+                    Modifier.let done@{
+                        if (dp == null) return@done it
+                        it.padding(dp)
                     }
     ) {
         PackageSearchBar(onSearch = { input -> viewModel.searchPackage(input) })
@@ -169,13 +168,13 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
 
 @Composable
 fun AboutPage(dp: PaddingValues? = null) {
+    val modifier =
+            Modifier.fillMaxSize().let done@{
+                if (dp == null) return@done it
+                it.padding(dp)
+            }
     Column(
-            modifier =
-                    if (dp == null) {
-                        Modifier.fillMaxSize()
-                    } else {
-                        Modifier.padding(dp).fillMaxSize()
-                    },
+            modifier = modifier,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
     ) {
