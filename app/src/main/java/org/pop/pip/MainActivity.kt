@@ -7,14 +7,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -43,18 +40,36 @@ import org.pop.pip.ui.theme.PopAndPipTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { Conversation() } }
+        setContent { PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { TopUi() } } }
+    }
+}
+
+@Composable
+fun TopUi() {
+    PopAndPipTheme {
+        val navController = rememberNavController()
+        val viewModel: HttpViewModel = viewModel()
+        Scaffold(bottomBar = { PopAndPipBottomBar(listOf("search", "about"), navController) }) {
+                padding ->
+            NavHost(navController = navController, startDestination = "search") {
+                composable("search") { SearchResultPage(viewModel = viewModel, dp = padding) }
+                composable("about") { AboutPage(dp = padding) }
+            }
         }
     }
 }
 
-data class Message(val author: String, val body: String)
-
 @Composable
-fun Conversation(viewModel: HttpViewModel = viewModel()) {
+fun SearchResultPage(viewModel: HttpViewModel = viewModel(), dp: PaddingValues? = null) {
     val state by viewModel.state
-    Column {
+    Column(
+            modifier =
+                    if (dp == null) {
+                        Modifier
+                    } else {
+                        Modifier.padding(dp)
+                    }
+    ) {
         PackageSearchBar(onSearch = { input -> viewModel.searchPackage(input) })
 
         when (val smartCastData = state) {
@@ -77,6 +92,7 @@ fun Conversation(viewModel: HttpViewModel = viewModel()) {
                                 verticalArrangement = Arrangement.spacedBy(2.dp),
                         ) {
                             items(smartCastData.data.results) { message -> AurResultCard(message) }
+                            item { Spacer(modifier = Modifier.height(4.dp)) }
                             item {
                                 Text(
                                         modifier = Modifier.fillMaxWidth(),
@@ -123,98 +139,12 @@ fun Conversation(viewModel: HttpViewModel = viewModel()) {
 }
 
 @Composable
-fun MessageCardR(msg: Message) {
-    Row(
-            modifier = Modifier.padding(all = 8.dp).fillMaxSize(),
-            horizontalArrangement = Arrangement.End,
-    ) {
-        Column {
-            Text(
-                    textAlign = TextAlign.End,
-                    text = msg.author,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp) {
-                Text(
-                        text = msg.body,
-                        modifier = Modifier.padding(all = 4.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Image(
-                painter = painterResource(R.drawable.lala),
-                contentDescription = "contentDescription",
-                modifier = Modifier.size(40.dp).clip(CircleShape)
-        )
-    }
-}
-
-@Composable
-fun MessageCardL(msg: Message) {
-    Row(
-            modifier = Modifier.padding(all = 8.dp).fillMaxSize(),
-    ) {
-        Image(
-                painter = painterResource(R.drawable.lala),
-                contentDescription = "contentDescription",
-                modifier = Modifier.size(40.dp).clip(CircleShape)
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column {
-            Text(
-                    text = msg.author,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.titleSmall
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Surface(shape = MaterialTheme.shapes.medium, shadowElevation = 1.dp) {
-                Text(
-                        text = msg.body,
-                        modifier = Modifier.padding(all = 4.dp),
-                        style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun TopUi() {
-    PopAndPipTheme {
-        val navController = rememberNavController()
-        Scaffold(
-                floatingActionButton = { FloatActionBtn() },
-                bottomBar = { PopAndPipBottomBar(listOf("login", "context"), navController) }
-        ) { padding ->
-            NavHost(navController = navController, startDestination = "login") {
-                composable("login") { LoginPage(padding) }
-                composable("context") { SecondPage() }
-            }
-        }
-    }
-}
-
-@Composable
 fun FloatActionBtn() {
     ExtendedFloatingActionButton(
             onClick = { println("ss") },
             icon = { Icon(Icons.Filled.Favorite, "Localized description") },
             text = { Text(text = "Extended FAB") },
     )
-}
-
-@Composable
-fun LoginPage(dp: PaddingValues) {
-    val name = "sssss"
-    Column(modifier = Modifier.padding(dp)) {
-        Text("$name is ")
-        Text("$name is ")
-        Text("$name is ")
-    }
 }
 
 @Composable
@@ -238,12 +168,21 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
 }
 
 @Composable
-fun SecondPage() {
-    val name = "eeee"
-    Column {
-        Text("$name is ")
-        Text("$name is ")
-        Text("$name is ")
-        Text("$name is ")
+fun AboutPage(dp: PaddingValues? = null) {
+    Column(
+            modifier =
+                    if (dp == null) {
+                        Modifier.fillMaxSize()
+                    } else {
+                        Modifier.padding(dp).fillMaxSize()
+                    },
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+                modifier = Modifier.clip(CircleShape),
+                painter = painterResource(R.drawable.lala),
+                contentDescription = "contentDescription",
+        )
     }
 }
