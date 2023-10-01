@@ -46,15 +46,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TopUi() {
-    PopAndPipTheme {
-        val navController = rememberNavController()
-        val viewModel: HttpViewModel = viewModel()
-        Scaffold(bottomBar = { PopAndPipBottomBar(listOf("search", "about"), navController) }) {
-                padding ->
-            NavHost(navController = navController, startDestination = "search") {
-                composable("search") { SearchResultPage(viewModel = viewModel, dp = padding) }
-                composable("about") { AboutPage(dp = padding) }
-            }
+    val navController = rememberNavController()
+    val viewModel: HttpViewModel = viewModel()
+    Scaffold(bottomBar = { PopAndPipBottomBar(listOf("search", "about"), navController) }) { padding
+        ->
+        NavHost(navController = navController, startDestination = "search") {
+            composable("search") { SearchResultPage(viewModel = viewModel, dp = padding) }
+            composable("about") { AboutPage(dp = padding) }
         }
     }
 }
