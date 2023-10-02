@@ -14,6 +14,7 @@ import okhttp3.Callback
 import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.pop.pip.aur.AurInfo
+import org.pop.pip.aur.AurResult
 import org.pop.pip.aur.RequestPackage
 import org.pop.pip.aur.Resource
 
@@ -67,5 +68,13 @@ class SearchPanelModel : ViewModel() {
 
     fun updateOldValue() {
         oldValue.value = searchValue.value
+    }
+}
+
+class DetailModel : ViewModel() {
+    val detailData = mutableStateOf<AurResult?>(null)
+
+    fun setData(value: AurResult) {
+        detailData.value = value
     }
 }

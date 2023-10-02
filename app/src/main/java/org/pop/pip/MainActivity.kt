@@ -34,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.pop.pip.aur.*
+import org.pop.pip.data.DetailModel
 import org.pop.pip.data.HttpViewModel
 import org.pop.pip.data.SearchPanelModel
 import org.pop.pip.ui.components.*
@@ -49,14 +50,19 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainPage() {
     val navController = rememberNavController()
+    val detailModel: DetailModel = viewModel()
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { TopUi(topNav = navController) }
-        composable("DetailPage") { DetailPage(navController = navController) }
+        composable("main") { TopUi(topNav = navController, detailModel = detailModel) }
+        composable("DetailPage") {
+            DetailPage(navController = navController, detailModel = detailModel)
+        }
     }
 }
 
 @Composable
-fun DetailPage(dp: PaddingValues? = null, navController: NavController) {
+fun DetailPage(dp: PaddingValues? = null, navController: NavController, detailModel: DetailModel) {
+    val aurInfo by detailModel.detailData
+    if (aurInfo == null) return
     val modifier =
             Modifier.fillMaxSize().let done@{
                 if (dp == null) return@done it
@@ -72,12 +78,12 @@ fun DetailPage(dp: PaddingValues? = null, navController: NavController) {
                 painter = painterResource(R.drawable.lala),
                 contentDescription = "contentDescription",
         )
-        Button(onClick = { navController.navigateUp() }) {}
+        Button(onClick = { navController.navigateUp() }) { Text(text = aurInfo!!.Name) }
     }
 }
 
 @Composable
-fun TopUi(topNav: NavController) {
+fun TopUi(topNav: NavController, detailModel: DetailModel) {
     val navController = rememberNavController()
     val viewModel: HttpViewModel = viewModel()
     val searchModel: SearchPanelModel = viewModel()
@@ -88,6 +94,7 @@ fun TopUi(topNav: NavController) {
                 SearchResultPage(
                         viewModel = viewModel,
                         searchModel = searchModel,
+                        detailModel = detailModel,
                         dp = padding,
                         navController = topNav
                 )
@@ -101,6 +108,7 @@ fun TopUi(topNav: NavController) {
 fun SearchResultPage(
         viewModel: HttpViewModel = viewModel(),
         searchModel: SearchPanelModel = viewModel(),
+        detailModel: DetailModel = viewModel(),
         dp: PaddingValues? = null,
         navController: NavController
 ) {
@@ -150,6 +158,7 @@ fun SearchResultPage(
                                                 Modifier.padding(all = 2.dp)
                                                         .fillMaxSize()
                                                         .clickable {
+                                                            detailModel.setData(message)
                                                             navController.navigate("DetailPage")
                                                         }
                                 )
