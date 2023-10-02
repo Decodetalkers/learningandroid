@@ -289,8 +289,14 @@ fun FloatActionBtn() {
 
 @Composable
 fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
-
     var selectedItem by remember { mutableIntStateOf(0) }
+    var callback =
+            NavController.OnDestinationChangedListener end@{ _, destination, _ ->
+                if (destination.route == null) return@end
+                val index = list.withIndex().first { destination.route == it.value }.index
+                if (index >= 0) selectedItem = index
+            }
+    navController.addOnDestinationChangedListener(callback)
 
     NavigationBar {
         list.forEachIndexed { index, item ->
