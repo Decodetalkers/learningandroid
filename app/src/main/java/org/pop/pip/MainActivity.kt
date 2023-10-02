@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -59,26 +60,44 @@ fun MainPage() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailPage(dp: PaddingValues? = null, navController: NavController, detailModel: DetailModel) {
+fun DetailPage(navController: NavController, detailModel: DetailModel) {
     val aurInfo by detailModel.detailData
     if (aurInfo == null) return
-    val modifier =
-            Modifier.fillMaxSize().let done@{
-                if (dp == null) return@done it
-                it.padding(dp)
+
+    Scaffold(
+            topBar = {
+                TopAppBar(
+                        colors =
+                                TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        titleContentColor = MaterialTheme.colorScheme.primary,
+                                ),
+                        title = { Text(text = aurInfo!!.Name) },
+                        navigationIcon = {
+                            IconButton(onClick = { navController.navigateUp() }) {
+                                Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                        contentDescription = "Localized description"
+                                )
+                            }
+                        },
+                )
             }
-    Column(
-            modifier = modifier,
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-                modifier = Modifier.clip(CircleShape),
-                painter = painterResource(R.drawable.lala),
-                contentDescription = "contentDescription",
-        )
-        Button(onClick = { navController.navigateUp() }) { Text(text = aurInfo!!.Name) }
+    ) { padding ->
+        Column(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                    modifier = Modifier.clip(CircleShape),
+                    painter = painterResource(R.drawable.lala),
+                    contentDescription = "contentDescription",
+            )
+            Button(onClick = { navController.navigateUp() }) { Text(text = aurInfo!!.Name) }
+        }
     }
 }
 
