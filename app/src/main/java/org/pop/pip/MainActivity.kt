@@ -91,18 +91,10 @@ fun DetailPage(navController: NavController, detailModel: DetailModel) {
                 )
             }
     ) { padding ->
-        Column(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                    modifier = Modifier.clip(CircleShape),
-                    painter = painterResource(R.drawable.lala),
-                    contentDescription = "contentDescription",
-            )
-            Button(onClick = { navController.navigateUp() }) { Text(text = aurInfo!!.Name) }
-        }
+        AurResultFullCard(
+                modifier = Modifier.fillMaxSize().padding(padding).padding(all = 10.dp),
+                data = aurInfo!!
+        )
     }
 }
 
