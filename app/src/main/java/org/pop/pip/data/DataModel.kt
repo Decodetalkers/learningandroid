@@ -15,8 +15,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.pop.pip.aur.AurInfo
 import org.pop.pip.aur.AurResult
-import org.pop.pip.aur.RequestPackage
 import org.pop.pip.aur.Resource
+import org.pop.pip.aur.requestPackage
 
 private val client = OkHttpClient()
 
@@ -35,7 +35,7 @@ class HttpViewModel : ViewModel() {
     }
     private suspend fun searchPackageInner(packageName: String) = flow {
         emit(Resource.Loading)
-        val request = RequestPackage(packageName)
+        val request = requestPackage(packageName)
         client.newCall(request)
                 .enqueue(
                         object : Callback {
