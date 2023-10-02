@@ -10,22 +10,22 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 
 @Composable
-public fun PackageSearchBar(onSearch: (String) -> Unit = {}) {
-    var searchValue by remember { mutableStateOf<String>(String()) }
-    var oldValue by remember { mutableStateOf<String>(String()) }
+public fun PackageSearchBar(
+        searchValue: String,
+        onValueChanged: (String) -> Unit = {},
+        onSearch: () -> Unit = {}
+) {
     OutlinedTextField(
             value = searchValue,
             singleLine = true,
             shape = shapes.large,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { value -> searchValue = value },
+            onValueChange = onValueChanged,
             colors =
                     TextFieldDefaults.colors(
                             focusedContainerColor = colorScheme.surface,
@@ -37,10 +37,8 @@ public fun PackageSearchBar(onSearch: (String) -> Unit = {}) {
             isError = false,
             keyboardActions =
                     KeyboardActions(
-                            onDone = done@{
-                                        if (oldValue == searchValue) return@done
-                                        oldValue = searchValue
-                                        onSearch(searchValue)
+                            onDone = {
+                                        onSearch()
                                     }
                     )
     )

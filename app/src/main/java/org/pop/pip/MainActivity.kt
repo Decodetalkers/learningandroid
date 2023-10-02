@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.pop.pip.aur.*
 import org.pop.pip.data.HttpViewModel
+import org.pop.pip.data.SearchPanelModel
 import org.pop.pip.ui.components.*
 import org.pop.pip.ui.theme.PopAndPipTheme
 
@@ -79,11 +80,17 @@ fun DetailPage(dp: PaddingValues? = null, navController: NavController) {
 fun TopUi(topNav: NavController) {
     val navController = rememberNavController()
     val viewModel: HttpViewModel = viewModel()
+    val searchModel: SearchPanelModel = viewModel()
     Scaffold(bottomBar = { PopAndPipBottomBar(listOf("search", "about"), navController) }) { padding
         ->
         NavHost(navController = navController, startDestination = "search") {
             composable("search") {
-                SearchResultPage(viewModel = viewModel, dp = padding, navController = topNav)
+                SearchResultPage(
+                        viewModel = viewModel,
+                        searchModel = searchModel,
+                        dp = padding,
+                        navController = topNav
+                )
             }
             composable("about") { AboutPage(dp = padding) }
         }
@@ -93,10 +100,13 @@ fun TopUi(topNav: NavController) {
 @Composable
 fun SearchResultPage(
         viewModel: HttpViewModel = viewModel(),
+        searchModel: SearchPanelModel = viewModel(),
         dp: PaddingValues? = null,
         navController: NavController
 ) {
     val state by viewModel.state
+    val searchValue by searchModel.searchValue
+    val oldValue by searchModel.oldValue
     Column(
             modifier =
                     Modifier.let done@{
@@ -104,7 +114,15 @@ fun SearchResultPage(
                         it.padding(dp)
                     }
     ) {
-        PackageSearchBar(onSearch = { input -> viewModel.searchPackage(input) })
+        PackageSearchBar(
+                searchValue = searchValue,
+                onValueChanged = { value -> searchModel.onValueChanged(value) },
+                onSearch = done@{
+                            if (oldValue == searchValue) return@done
+                            searchModel.updateOldValue()
+                            viewModel.searchPackage(searchValue)
+                        }
+        )
 
         when (val smartCastData = state) {
             is Resource.Success ->

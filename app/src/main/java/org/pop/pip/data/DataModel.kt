@@ -55,3 +55,17 @@ class HttpViewModel : ViewModel() {
                 )
     }
 }
+
+class SearchPanelModel : ViewModel() {
+
+    var searchValue = mutableStateOf<String>(String())
+    var oldValue = mutableStateOf<String>(String())
+
+    fun onValueChanged(value: String) {
+        searchValue.value = value
+    }
+
+    fun updateOldValue() {
+        oldValue.value = searchValue.value
+    }
+}
