@@ -19,6 +19,22 @@ enum class RequestType {
     MakeDepends
 }
 
+fun RequestType.toName(): String {
+    when (this) {
+        RequestType.MakeDepends -> return "MakeDepends"
+        RequestType.User -> return "User"
+        else -> return "Package"
+    }
+}
+
+fun RequestType.fromName(name: String): RequestType {
+    when (name) {
+        "User" -> return RequestType.User
+        "MakeDepends" -> return RequestType.MakeDepends
+        else -> return RequestType.Package
+    }
+}
+
 fun requestPackage(packageName: String, requestType: RequestType = RequestType.Package): Request {
     var formPre = FormBody.Builder().add("v", "5").add("type", "search")
     when (requestType) {

@@ -6,13 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -24,6 +27,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -132,9 +136,13 @@ fun SearchResultPage(
         dp: PaddingValues? = null,
         navController: NavController
 ) {
+    var expanded by remember { mutableStateOf(false) }
     val state by viewModel.state
     val searchValue by searchModel.searchValue
     val oldValue by searchModel.oldValue
+    var requestType by remember { mutableStateOf(RequestType.Package) }
+    var requestTypeOld by remember { mutableStateOf(RequestType.Package) }
+    val foucsManager = LocalFocusManager.current
     Column(
             modifier =
                     Modifier.let done@{
@@ -142,15 +150,63 @@ fun SearchResultPage(
                         it.padding(dp)
                     }
     ) {
-        PackageSearchBar(
-                searchValue = searchValue,
-                onValueChanged = { value -> searchModel.onValueChanged(value) },
-                onSearch = done@{
-                            if (oldValue == searchValue) return@done
-                            searchModel.updateOldValue()
-                            viewModel.searchPackage(searchValue)
+        Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+        ) {
+            PackageSearchBar(
+                    modifier = Modifier.weight(1f),
+                    searchValue = searchValue,
+                    onValueChanged = { value -> searchModel.onValueChanged(value) },
+                    onSearch = done@{
+                                foucsManager.clearFocus()
+                                if (oldValue == searchValue &&
+                                                requestType.toName() == requestTypeOld.toName()
+                                )
+                                        return@done
+                                requestTypeOld = requestType
+                                searchModel.updateOldValue()
+                                viewModel.searchPackage(
+                                        packageName = searchValue,
+                                        requestType = requestType
+                                )
+                            }
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Box {
+                TextButton(
+                        onClick = {
+                            expanded = !expanded
+                            foucsManager.clearFocus()
                         }
-        )
+                ) { Text(text = requestType.toName()) }
+                DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
+                    DropdownMenuItem(
+                            text = { Text(RequestType.Package.toName()) },
+                            onClick = {
+                                requestType = RequestType.Package
+                                expanded = false
+                            }
+                    )
+                    DropdownMenuItem(
+                            text = { Text(RequestType.MakeDepends.toName()) },
+                            onClick = {
+                                requestType = RequestType.MakeDepends
+                                expanded = false
+                            }
+                    )
+                    DropdownMenuItem(
+                            text = { Text(RequestType.User.toName()) },
+                            onClick = {
+                                requestType = RequestType.User
+                                expanded = false
+                            }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(2.dp))
+        }
 
         when (val smartCastData = state) {
             is Resource.Success ->

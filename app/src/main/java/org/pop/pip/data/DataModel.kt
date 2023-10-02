@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Response
 import org.pop.pip.aur.AurInfo
 import org.pop.pip.aur.AurResult
+import org.pop.pip.aur.RequestType
 import org.pop.pip.aur.Resource
 import org.pop.pip.aur.requestPackage
 
@@ -22,7 +23,7 @@ private val client = OkHttpClient()
 
 class HttpViewModel : ViewModel() {
     val state = mutableStateOf<Resource<AurInfo>>(Resource.Begin)
-    fun searchPackage(packageName: String) {
+    fun searchPackage(packageName: String, requestType: RequestType = RequestType.Package) {
         if (packageName.isEmpty()) {
             state.value = Resource.Begin
             return
@@ -30,12 +31,14 @@ class HttpViewModel : ViewModel() {
         val thestate by state
         if (thestate is Resource.Loading) return
         viewModelScope.launch {
-            searchPackageInner(packageName).collect { response -> state.value = response }
+            searchPackageInner(packageName, requestType).collect { response ->
+                state.value = response
+            }
         }
     }
-    private suspend fun searchPackageInner(packageName: String) = flow {
+    private suspend fun searchPackageInner(packageName: String, requestType: RequestType) = flow {
         emit(Resource.Loading)
-        val request = requestPackage(packageName)
+        val request = requestPackage(packageName = packageName, requestType = requestType)
         client.newCall(request)
                 .enqueue(
                         object : Callback {
