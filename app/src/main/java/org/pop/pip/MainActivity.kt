@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import kotlinx.coroutines.launch
 import org.pop.pip.aur.*
 import org.pop.pip.data.DetailModel
 import org.pop.pip.data.HttpViewModel
@@ -124,6 +124,7 @@ fun TopUi(topNav: NavController, detailModel: DetailModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchResultPage(
         viewModel: HttpViewModel = viewModel(),
@@ -139,6 +140,8 @@ fun SearchResultPage(
     var requestType by remember { mutableStateOf(RequestType.Package) }
     var requestTypeOld by remember { mutableStateOf(RequestType.Package) }
     val foucsManager = LocalFocusManager.current
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
     Column(
             modifier =
                     Modifier.let done@{
@@ -170,35 +173,64 @@ fun SearchResultPage(
                             }
             )
             Spacer(modifier = Modifier.width(2.dp))
-            Box {
-                TextButton(
-                        onClick = {
-                            expanded = !expanded
-                            foucsManager.clearFocus()
-                        }
-                ) { Text(text = requestType.toName()) }
-                DropdownMenu(expanded, onDismissRequest = { expanded = false }) {
-                    DropdownMenuItem(
-                            text = { Text(RequestType.Package.toName()) },
-                            onClick = {
-                                requestType = RequestType.Package
-                                expanded = false
-                            }
-                    )
-                    DropdownMenuItem(
-                            text = { Text(RequestType.MakeDepends.toName()) },
-                            onClick = {
-                                requestType = RequestType.MakeDepends
-                                expanded = false
-                            }
-                    )
-                    DropdownMenuItem(
-                            text = { Text(RequestType.User.toName()) },
-                            onClick = {
-                                requestType = RequestType.User
-                                expanded = false
-                            }
-                    )
+            TextButton(
+                    onClick = {
+                        expanded = !expanded
+                        foucsManager.clearFocus()
+                    }
+            ) { Text(text = requestType.toName()) }
+            if (expanded) {
+                ModalBottomSheet(onDismissRequest = { expanded = false }, sheetState = sheetState) {
+                    Column {
+                        Text(
+                                textAlign = TextAlign.Center,
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .clickable {
+                                                    requestType = RequestType.Package
+                                                    scope
+                                                            .launch { sheetState.hide() }
+                                                            .invokeOnCompletion { expanded = false }
+                                                }
+                                                .padding(all = 10.dp),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                text = RequestType.Package.toName()
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                                textAlign = TextAlign.Center,
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .clickable {
+                                                    requestType = RequestType.MakeDepends
+                                                    scope
+                                                            .launch { sheetState.hide() }
+                                                            .invokeOnCompletion { expanded = false }
+                                                }
+                                                .padding(all = 10.dp),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                text = RequestType.MakeDepends.toName()
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                                textAlign = TextAlign.Center,
+                                modifier =
+                                        Modifier.fillMaxWidth()
+                                                .clickable {
+                                                    requestType = RequestType.User
+                                                    scope
+                                                            .launch { sheetState.hide() }
+                                                            .invokeOnCompletion { expanded = false }
+                                                }
+                                                .padding(all = 10.dp),
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                text = RequestType.User.toName()
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
             }
             Spacer(modifier = Modifier.width(2.dp))
@@ -360,19 +392,13 @@ fun AboutPage(dp: PaddingValues? = null) {
                 // horizontalAlignment = Alignment.CenterHorizontally
                 ) {
             Row {
-                Text(
-                        text = "License:",
-                        modifier = Modifier.width(leftWidth)
-                )
+                Text(text = "License:", modifier = Modifier.width(leftWidth))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = "MIT")
             }
             Spacer(modifier = Modifier.height(2.dp))
             Row {
-                Text(
-                        text = "Github:",
-                        modifier = Modifier.width(leftWidth)
-                )
+                Text(text = "Github:", modifier = Modifier.width(leftWidth))
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                         modifier = Modifier.clickable { uriHandler.openUri(remoteUrl) },
