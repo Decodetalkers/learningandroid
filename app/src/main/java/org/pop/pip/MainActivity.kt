@@ -159,7 +159,8 @@ fun SearchResultPage(
                     onSearch = done@{
                                 focusManager.clearFocus()
                                 if (oldValue == searchValue &&
-                                                requestType.toName() == requestTypeOld.toName()
+                                                requestType.toName() == requestTypeOld.toName() &&
+                                                !(state is Resource.Failure)
                                 )
                                         return@done
                                 requestTypeOld = requestType
@@ -254,11 +255,17 @@ fun SearchResultPage(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            AurCardError(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    err = smartCastData.data.error,
-                                    textAlign = TextAlign.Center
-                            )
+                            Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                AurCardError(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        err = smartCastData.data.error,
+                                        textAlign = TextAlign.Center
+                                )
+                            }
                         }
                     } else {
                         LazyColumn(
