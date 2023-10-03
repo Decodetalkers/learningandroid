@@ -52,6 +52,7 @@ jobs:
       - name: Build gradle project
         run: ./gradlew build
 
+
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
         run: ./gradlew assembleDebug
@@ -65,6 +66,15 @@ jobs:
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
+  release:
+    permissions:
+      contents: write
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    steps:
       # Upload Artifact Build
       # Noted For Output [main_project_module]/build/outputs/apk/debug/
       - name: Upload APK Debug - ${{ env.repository_name }}
