@@ -1,10 +1,9 @@
 package org.pop.pip.aur
 
 import kotlinx.serialization.*
-import kotlinx.serialization.json.*
 
 @Serializable
-public data class AurResult(
+data class AurResult(
         val ID: Int,
         val Name: String,
         val PackageBaseID: Int,
@@ -26,7 +25,7 @@ public data class AurResult(
 )
 
 @Serializable
-public data class AurInfo(
+data class AurInfo(
         val version: Int,
         val type: String,
         val resultcount: Int,

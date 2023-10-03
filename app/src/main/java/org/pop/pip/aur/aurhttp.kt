@@ -20,18 +20,10 @@ enum class RequestType {
 }
 
 fun RequestType.toName(): String {
-    when (this) {
-        RequestType.MakeDepends -> return "MakeDepends"
-        RequestType.User -> return "User"
-        else -> return "Package"
-    }
-}
-
-fun RequestType.fromName(name: String): RequestType {
-    when (name) {
-        "User" -> return RequestType.User
-        "MakeDepends" -> return RequestType.MakeDepends
-        else -> return RequestType.Package
+    return when (this) {
+        RequestType.MakeDepends -> "MakeDepends"
+        RequestType.User -> "User"
+        else -> "Package"
     }
 }
 

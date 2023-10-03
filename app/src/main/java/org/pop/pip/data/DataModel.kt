@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import java.io.IOException
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
@@ -43,7 +42,7 @@ class HttpViewModel : ViewModel() {
                 .enqueue(
                         object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
-                                state.value = Resource.Failure("Unexpected code ${e}")
+                                state.value = Resource.Failure("Unexpected code $e")
                             }
 
                             override fun onResponse(call: Call, response: Response) {
@@ -62,8 +61,8 @@ class HttpViewModel : ViewModel() {
 
 class SearchPanelModel : ViewModel() {
 
-    var searchValue = mutableStateOf<String>(String())
-    var oldValue = mutableStateOf<String>(String())
+    var searchValue = mutableStateOf(String())
+    var oldValue = mutableStateOf(String())
 
     fun onValueChanged(value: String) {
         searchValue.value = value
