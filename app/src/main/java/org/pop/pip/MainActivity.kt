@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -27,10 +28,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -290,7 +294,7 @@ fun FloatActionBtn() {
 @Composable
 fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(0) }
-    var callback =
+    val callback =
             NavController.OnDestinationChangedListener end@{ _, destination, _ ->
                 if (destination.route == null) return@end
                 val index = list.withIndex().first { destination.route == it.value }.index
@@ -313,22 +317,70 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutPage(dp: PaddingValues? = null) {
+    val leftWidth = 95.dp
+    val uriHandler = LocalUriHandler.current
+    val remoteUrl = "https://github.com/Decodetalkers/learningandroid"
     val modifier =
             Modifier.fillMaxSize().let done@{
                 if (dp == null) return@done it
                 it.padding(dp)
             }
-    Column(
+    Scaffold(
+            topBar = {
+                TopAppBar(
+                        colors =
+                                TopAppBarDefaults.topAppBarColors(
+                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                        titleContentColor = MaterialTheme.colorScheme.primary,
+                                ),
+                        title = {
+                            Row {
+                                Text(text = "About")
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Image(
+                                        modifier =
+                                                Modifier.width(25.dp)
+                                                        .height(25.dp)
+                                                        .clip(CircleShape),
+                                        painter = painterResource(R.drawable.lala),
+                                        contentDescription = "contentDescription",
+                                )
+                            }
+                        }
+                )
+            },
             modifier = modifier,
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-                modifier = Modifier.clip(CircleShape),
-                painter = painterResource(R.drawable.lala),
-                contentDescription = "contentDescription",
-        )
+    ) { padding ->
+        Column(
+                modifier = Modifier.padding(padding).fillMaxHeight().padding(all = 10.dp),
+                verticalArrangement = Arrangement.Center,
+                // horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+            Row {
+                Text(
+                        text = "License:",
+                        modifier = Modifier.width(leftWidth)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "MIT")
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            Row {
+                Text(
+                        text = "Github:",
+                        modifier = Modifier.width(leftWidth)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                        modifier = Modifier.clickable { uriHandler.openUri(remoteUrl) },
+                        text = remoteUrl,
+                        textDecoration = TextDecoration.Underline,
+                        color = Color(0xff64B5F6)
+                )
+            }
+        }
     }
 }
