@@ -193,6 +193,10 @@ fun SearchResultPage(
                                                             .invokeOnCompletion { expanded = false }
                                                 }
                                                 .padding(all = 10.dp),
+                                color =
+                                        if (requestType == RequestType.Package)
+                                                MaterialTheme.colorScheme.primary
+                                        else Color.Unspecified,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 text = RequestType.Package.toName()
@@ -209,6 +213,10 @@ fun SearchResultPage(
                                                             .invokeOnCompletion { expanded = false }
                                                 }
                                                 .padding(all = 10.dp),
+                                color =
+                                        if (requestType == RequestType.MakeDepends)
+                                                MaterialTheme.colorScheme.primary
+                                        else Color.Unspecified,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 text = RequestType.MakeDepends.toName()
@@ -225,6 +233,10 @@ fun SearchResultPage(
                                                             .invokeOnCompletion { expanded = false }
                                                 }
                                                 .padding(all = 10.dp),
+                                color =
+                                        if (requestType == RequestType.User)
+                                                MaterialTheme.colorScheme.primary
+                                        else Color.Unspecified,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
                                 text = RequestType.User.toName()
