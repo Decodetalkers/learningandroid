@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -134,7 +136,7 @@ fun SearchResultPage(
     val oldValue by searchModel.oldValue
     var requestType by remember { mutableStateOf(RequestType.Package) }
     var requestTypeOld by remember { mutableStateOf(RequestType.Package) }
-    val foucsManager = LocalFocusManager.current
+    val focusManager = LocalFocusManager.current
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     Column(
@@ -154,7 +156,7 @@ fun SearchResultPage(
                     searchValue = searchValue,
                     onValueChanged = { value -> searchModel.onValueChanged(value) },
                     onSearch = done@{
-                                foucsManager.clearFocus()
+                                focusManager.clearFocus()
                                 if (oldValue == searchValue &&
                                                 requestType.toName() == requestTypeOld.toName()
                                 )
@@ -171,7 +173,7 @@ fun SearchResultPage(
             TextButton(
                     onClick = {
                         expanded = !expanded
-                        foucsManager.clearFocus()
+                        focusManager.clearFocus()
                     }
             ) { Text(text = requestType.toName()) }
             if (expanded) {
@@ -359,6 +361,7 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutPage(dp: PaddingValues? = null) {
+    var showDialog by remember { mutableStateOf(false) }
     val uriHandler = LocalUriHandler.current
     val remoteUrl = "https://github.com/Decodetalkers/learningandroid"
     val modifier =
@@ -412,13 +415,70 @@ fun AboutPage(dp: PaddingValues? = null) {
             Spacer(modifier = Modifier.height(6.dp))
             Column(
                     modifier =
-                            Modifier.clickable { uriHandler.openUri(remoteUrl) }
-                                    .fillMaxWidth()
-                                    .padding(10.dp)
+                            Modifier.clickable { showDialog = true }.fillMaxWidth().padding(10.dp)
             ) {
                 Text(text = "License", fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = "MIT", fontSize = 15.sp, fontWeight = FontWeight.Medium)
+            }
+        }
+    }
+    if (showDialog) {
+        DialogLicense { showDialog = false }
+    }
+}
+
+const val MITLICENSE =
+        """
+MIT License
+Copyright (c) 2023 Decodetalkers
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
+@Composable
+fun DialogLicense(
+        onDismissRequest: () -> Unit,
+) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+                modifier = Modifier.fillMaxWidth().height(475.dp).padding(16.dp),
+                shape = RoundedCornerShape(16.dp),
+        ) {
+            LazyColumn {
+                item {
+                    Text(
+                            text = MITLICENSE,
+                            modifier = Modifier.padding(16.dp),
+                    )
+                }
+                item {
+                    Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                    ) {
+                        TextButton(
+                                onClick = { onDismissRequest() },
+                                modifier = Modifier.padding(8.dp),
+                        ) { Text("Ok") }
+                    }
+                }
             }
         }
     }
