@@ -3,7 +3,6 @@ package org.pop.pip
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
@@ -26,14 +24,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -364,7 +359,6 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutPage(dp: PaddingValues? = null) {
-    val leftWidth = 95.dp
     val uriHandler = LocalUriHandler.current
     val remoteUrl = "https://github.com/Decodetalkers/learningandroid"
     val modifier =
@@ -375,49 +369,56 @@ fun AboutPage(dp: PaddingValues? = null) {
     Scaffold(
             topBar = {
                 TopAppBar(
-                        colors =
-                                TopAppBarDefaults.topAppBarColors(
-                                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                        titleContentColor = MaterialTheme.colorScheme.primary,
-                                ),
                         title = {
-                            Row {
-                                Text(text = "About")
-                                Spacer(modifier = Modifier.width(10.dp))
-                                Image(
-                                        modifier =
-                                                Modifier.width(25.dp)
-                                                        .height(25.dp)
-                                                        .clip(CircleShape),
-                                        painter = painterResource(R.drawable.lala),
-                                        contentDescription = "contentDescription",
-                                )
-                            }
+                            Text(
+                                    text = "About",
+                                    modifier = Modifier.fillMaxWidth().padding(all = 10.dp),
+                                    fontSize = 30.sp,
+                                    color = Color.Black,
+                                    fontWeight = FontWeight.Bold,
+                                    textAlign = TextAlign.Right
+                            )
                         }
                 )
             },
             modifier = modifier,
     ) { padding ->
         Column(
-                modifier = Modifier.padding(padding).fillMaxHeight().padding(all = 10.dp),
-                verticalArrangement = Arrangement.Center,
-                // horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-            Row {
-                Text(text = "License:", modifier = Modifier.width(leftWidth))
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(text = "MIT")
-            }
+                modifier = Modifier.padding(padding).fillMaxHeight().padding(all = 30.dp),
+        ) {
             Spacer(modifier = Modifier.height(2.dp))
-            Row {
-                Text(text = "Github:", modifier = Modifier.width(leftWidth))
+            Text(
+                    modifier = Modifier.fillMaxWidth().padding(start = 10.dp),
+                    text = "Project PopAndPip -> An Aur Searcher",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                    modifier =
+                            Modifier.clickable { uriHandler.openUri(remoteUrl) }
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+            ) {
+                Text(text = "Github", fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                        modifier = Modifier.clickable { uriHandler.openUri(remoteUrl) },
-                        text = remoteUrl,
-                        textDecoration = TextDecoration.Underline,
-                        color = Color(0xff64B5F6)
+                        text = "View the source code",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium
                 )
+            }
+            Spacer(modifier = Modifier.height(6.dp))
+            Column(
+                    modifier =
+                            Modifier.clickable { uriHandler.openUri(remoteUrl) }
+                                    .fillMaxWidth()
+                                    .padding(10.dp)
+            ) {
+                Text(text = "License", fontSize = 17.sp, fontWeight = FontWeight.ExtraBold)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(text = "MIT", fontSize = 15.sp, fontWeight = FontWeight.Medium)
             }
         }
     }
