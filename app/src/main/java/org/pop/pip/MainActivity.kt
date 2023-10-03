@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -332,6 +333,13 @@ fun FloatActionBtn() {
     )
 }
 
+fun String.toIcon(): Int {
+    when (this) {
+        "search" -> return R.drawable.search
+        else -> return R.drawable.about
+    }
+}
+
 @Composable
 fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
     var selectedItem by remember { mutableIntStateOf(0) }
@@ -346,7 +354,13 @@ fun PopAndPipBottomBar(list: List<String>, navController: NavController) {
     NavigationBar {
         list.forEachIndexed { index, item ->
             NavigationBarItem(
-                    icon = { Icon(Icons.Filled.Favorite, contentDescription = item) },
+                    icon = {
+                        Icon(
+                                modifier = Modifier.width(30.dp).height(30.dp),
+                                painter = painterResource(id = item.toIcon()),
+                                contentDescription = item
+                        )
+                    },
                     label = { Text(item) },
                     selected = selectedItem == index,
                     onClick = {
