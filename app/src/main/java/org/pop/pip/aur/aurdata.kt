@@ -1,27 +1,29 @@
 package org.pop.pip.aur
 
+import androidx.room.*
 import kotlinx.serialization.*
 
+@Entity(tableName = "history_table")
 @Serializable
 data class AurResult(
-        val ID: Int,
-        val Name: String,
-        val PackageBaseID: Int,
-        val PackageBase: String,
-        val Description: String? = null,
-        val URL: String? = null,
-        val NumVotes: Int,
-        val Popularity: Float,
-        val OutOfDate: Long?,
-        val Maintainer: String?,
-        val FirstSubmitted: Long,
-        val LastModified: Long,
-        val URLPath: String,
-        val Depends: List<String>? = null,
-        val MakeDepends: List<String>? = null,
-        val License: List<String>? = null,
-        val Keywords: List<String>? = null,
-        val Version: String
+        @PrimaryKey val ID: Int,
+        @ColumnInfo(name = "name") val Name: String,
+        @ColumnInfo(name = "package_id") val PackageBaseID: Int,
+        @ColumnInfo(name = "package_base") val PackageBase: String,
+        @ColumnInfo(name = "description") val Description: String? = null,
+        @ColumnInfo(name = "url") val URL: String? = null,
+        @ColumnInfo(name = "num_votes") val NumVotes: Int,
+        @ColumnInfo(name = "popularity") val Popularity: Float,
+        @ColumnInfo(name = "out_of_date") val OutOfDate: Long?,
+        @ColumnInfo(name = "maintainer") val Maintainer: String?,
+        @ColumnInfo(name = "first_submitted") val FirstSubmitted: Long,
+        @ColumnInfo(name = "lastmodified") val LastModified: Long,
+        @ColumnInfo(name = "url_path") val URLPath: String,
+        @ColumnInfo(name = "depends") val Depends: List<String>? = null,
+        @ColumnInfo(name = "make_depends") val MakeDepends: List<String>? = null,
+        @ColumnInfo(name = "license") val License: List<String>? = null,
+        @ColumnInfo(name = "keywords") val Keywords: List<String>? = null,
+        @ColumnInfo(name = "version") val Version: String
 )
 
 @Serializable

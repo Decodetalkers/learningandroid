@@ -5,5 +5,5 @@ indent_style = space
 indent_size = 4
 
 [*.kt]
-indent_size = space
+indent_style = space
 indent_size = 4

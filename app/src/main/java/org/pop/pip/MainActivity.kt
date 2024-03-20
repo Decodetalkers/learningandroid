@@ -40,15 +40,20 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import kotlinx.coroutines.launch
 import org.pop.pip.aur.*
 import org.pop.pip.data.DetailModel
 import org.pop.pip.data.HttpViewModel
 import org.pop.pip.data.SearchPanelModel
+import org.pop.pip.db.HistroryDataBase
 import org.pop.pip.ui.components.*
 import org.pop.pip.ui.theme.PopAndPipTheme
 
 class MainActivity : ComponentActivity() {
+    private val db by lazy {
+        Room.databaseBuilder(applicationContext, HistroryDataBase::class.java, "history.db").build()
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { MainPage() } } }
