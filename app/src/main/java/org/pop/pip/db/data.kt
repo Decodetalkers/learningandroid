@@ -1,11 +1,16 @@
 package org.pop.pip.db
 
+import androidx.lifecycle.ViewModel
 import androidx.room.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import org.pop.pip.aur.AurResult
 
 @Dao
 interface HistoryDao {
-    @Query("SELECT * FROM history_table") fun getAll(): List<AurResult>
+    @Query("SELECT * FROM history_table ORDER BY name asc") fun getAll(): Flow<List<AurResult>>
 
     @Insert fun insertHistory(vararg history: AurResult)
 }
@@ -22,9 +27,17 @@ class ListConvertor {
     }
 }
 
-
 @TypeConverters(ListConvertor::class)
 @Database(entities = [AurResult::class], version = 1)
-abstract class HistroryDataBase : RoomDatabase() {
+abstract class HistoryDataBase : RoomDatabase() {
     abstract fun userHistory(): HistoryDao
+}
+
+class HistoryViewModel(private val dao: HistoryDao) : ViewModel() {
+    fun getAllRecords(): Flow<List<AurResult>> {
+        return dao.getAll()
+    }
+    fun insertHistory(history: AurResult) {
+        CoroutineScope(Dispatchers.IO).launch { dao.insertHistory(history) }
+    }
 }

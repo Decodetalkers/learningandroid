@@ -3,6 +3,7 @@ package org.pop.pip
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -46,26 +49,42 @@ import org.pop.pip.aur.*
 import org.pop.pip.data.DetailModel
 import org.pop.pip.data.HttpViewModel
 import org.pop.pip.data.SearchPanelModel
-import org.pop.pip.db.HistroryDataBase
+import org.pop.pip.db.HistoryDataBase
+import org.pop.pip.db.HistoryViewModel
 import org.pop.pip.ui.components.*
 import org.pop.pip.ui.theme.PopAndPipTheme
 
 class MainActivity : ComponentActivity() {
     private val db by lazy {
-        Room.databaseBuilder(applicationContext, HistroryDataBase::class.java, "history.db").build()
+        Room.databaseBuilder(applicationContext, HistoryDataBase::class.java, "history.db").build()
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private val viewModel by
+            viewModels<HistoryViewModel>(
+                    factoryProducer = {
+                        object : ViewModelProvider.Factory {
+                            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                                return HistoryViewModel(db.userHistory()) as T
+                            }
+                        }
+                    }
+            )
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent { PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { MainPage() } } }
+        setContent {
+            PopAndPipTheme { Surface(modifier = Modifier.fillMaxSize()) { MainPage(viewModel) } }
+        }
     }
 }
 
 @Composable
-fun MainPage() {
+fun MainPage(vm: HistoryViewModel) {
+
     val navController = rememberNavController()
     val detailModel: DetailModel = viewModel()
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { TopUi(topNav = navController, detailModel = detailModel) }
+        composable("main") { TopUi(topNav = navController, detailModel = detailModel, vm = vm) }
         composable("DetailPage") {
             DetailPage(navController = navController, detailModel = detailModel)
         }
@@ -106,7 +125,7 @@ fun DetailPage(navController: NavController, detailModel: DetailModel) {
 }
 
 @Composable
-fun TopUi(topNav: NavController, detailModel: DetailModel) {
+fun TopUi(topNav: NavController, detailModel: DetailModel, vm: HistoryViewModel) {
     val navController = rememberNavController()
     val viewModel: HttpViewModel = viewModel()
     val searchModel: SearchPanelModel = viewModel()
@@ -119,7 +138,8 @@ fun TopUi(topNav: NavController, detailModel: DetailModel) {
                         searchModel = searchModel,
                         detailModel = detailModel,
                         dp = padding,
-                        navController = topNav
+                        navController = topNav,
+                        vm = vm
                 )
             }
             composable("about") { AboutPage(dp = padding) }
@@ -134,8 +154,10 @@ fun SearchResultPage(
         searchModel: SearchPanelModel = viewModel(),
         detailModel: DetailModel = viewModel(),
         dp: PaddingValues? = null,
-        navController: NavController
+        navController: NavController,
+        vm: HistoryViewModel
 ) {
+    val dataList = vm.getAllRecords().collectAsState(initial = emptyList())
     var expanded by remember { mutableStateOf(false) }
     val state by viewModel.state
     val searchValue by searchModel.searchValue
@@ -284,6 +306,7 @@ fun SearchResultPage(
                                                 Modifier.padding(all = 2.dp)
                                                         .fillMaxSize()
                                                         .clickable {
+                                                            vm.insertHistory(message)
                                                             detailModel.setData(message)
                                                             navController.navigate("DetailPage")
                                                         }
@@ -307,18 +330,47 @@ fun SearchResultPage(
                             textAlign = TextAlign.Center
                     )
             Resource.Begin ->
-                    Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                                modifier = Modifier.fillMaxWidth(),
-                                text = "Today is a good day, doesn't it?",
-                                textAlign = TextAlign.Center,
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold
-                        )
+                    if (dataList.value.isEmpty()) {
+                        Column(
+                                modifier = Modifier.fillMaxSize(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = "Today is a good day, doesn't it?",
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.Bold
+                            )
+                        }
+                    } else {
+                        LazyColumn(
+                                modifier = Modifier.padding(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(2.dp),
+                        ) {
+                            items(dataList.value) { message ->
+                                AurResultCard(
+                                        data = message,
+                                        modifier =
+                                                Modifier.padding(all = 2.dp)
+                                                        .fillMaxSize()
+                                                        .clickable {
+                                                            detailModel.setData(message)
+                                                            navController.navigate("DetailPage")
+                                                        }
+                                )
+                            }
+                            item { Spacer(modifier = Modifier.height(4.dp)) }
+                            item {
+                                Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Hello my user!!",
+                                        textAlign = TextAlign.Center,
+                                        fontSize = 15.sp,
+                                )
+                            }
+                        }
                     }
             else ->
                     Column(
