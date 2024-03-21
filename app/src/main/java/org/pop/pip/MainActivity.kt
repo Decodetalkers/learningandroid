@@ -179,6 +179,12 @@ fun SearchResultPage(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
         ) {
+            TextButton(
+                    onClick = {
+                        searchModel.clearData()
+                        viewModel.clearStatus()
+                    }
+            ) { Text("x") }
             PackageSearchBar(
                     modifier = Modifier.weight(1f),
                     searchValue = searchValue,
@@ -365,7 +371,7 @@ fun SearchResultPage(
                             item {
                                 Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Hello my user!!",
+                                        text = "Today is a good day, doesn't it?",
                                         textAlign = TextAlign.Center,
                                         fontSize = 15.sp,
                                 )

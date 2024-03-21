@@ -22,6 +22,9 @@ private val client = OkHttpClient()
 
 class HttpViewModel : ViewModel() {
     val state = mutableStateOf<Resource<AurInfo>>(Resource.Begin)
+    fun clearStatus() {
+        state.value = Resource.Begin
+    }
     fun searchPackage(packageName: String, requestType: RequestType = RequestType.Package) {
         if (packageName.isEmpty()) {
             state.value = Resource.Begin
@@ -66,6 +69,11 @@ class SearchPanelModel : ViewModel() {
 
     fun onValueChanged(value: String) {
         searchValue.value = value
+    }
+
+    fun clearData() {
+        searchValue.value = ""
+        oldValue.value = ""
     }
 
     fun updateOldValue() {
