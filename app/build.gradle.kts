@@ -4,10 +4,9 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    //id 'com.google.devtools.ksp' version '1.9.23-1.0.19' apply true
-    //id "com.google.devtools.ksp" apply true
+    // id 'com.google.devtools.ksp' version '1.9.23-1.0.19' apply true
+    // id "com.google.devtools.ksp" apply true
     alias(libs.plugins.google.devtools.ksp) apply true
-
 }
 
 android {
@@ -19,16 +18,12 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName  ="1.5"
+        versionName = "1.5"
 
-        testInstrumentationRunner= "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables { useSupportLibrary = true }
         javaCompileOptions {
-            annotationProcessorOptions {
-                arguments["room.schemaLocation"]= "$projectDir/schemas"
-            }
+            annotationProcessorOptions { arguments["room.schemaLocation"] = "$projectDir/schemas" }
         }
     }
 
@@ -36,8 +31,8 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
             )
         }
     }
@@ -45,12 +40,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-    buildFeatures {
-        compose = true
-    }
+    kotlinOptions { jvmTarget = JavaVersion.VERSION_17.toString() }
+    buildFeatures { compose = true }
 }
 
 dependencies {
@@ -72,7 +63,6 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation(platform(libs.squareup.okhttp3.bom))
-
 
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
@@ -98,10 +88,8 @@ dependencies {
     // optional - Paging 3 Integration
     implementation(libs.androidx.room.paging)
 
-
     // define any required OkHttp artifacts without version
     implementation(libs.squareup.okhttp3)
     implementation(libs.squareup.okhttp3.logging.interceptor)
     implementation(libs.jetbrains.kotlinx.serialization.json)
-
 }
