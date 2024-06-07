@@ -1,4 +1,5 @@
 plugins {
+    alias(libs.plugins.compose.compiler)
 
     alias(libs.plugins.jetbrains.kotlin.plugin.serialization)
     alias(libs.plugins.android.application)
@@ -44,14 +45,6 @@ android {
     }
     buildFeatures {
         compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
-    }
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
 }
 
