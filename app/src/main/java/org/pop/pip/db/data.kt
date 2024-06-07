@@ -28,7 +28,7 @@ class ListConvertor {
 }
 
 @TypeConverters(ListConvertor::class)
-@Database(entities = [AurResult::class], version = 1)
+@Database(entities = [AurResult::class], version = 1, exportSchema = false)
 abstract class HistoryDataBase : RoomDatabase() {
     abstract fun userHistory(): HistoryDao
 }
