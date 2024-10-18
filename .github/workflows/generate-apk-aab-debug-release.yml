@@ -54,11 +54,11 @@ jobs:
 
 
       # Create APK Debug
-      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+      - name: Build apk debug project (APK)
         run: ./gradlew assembleDebug
 
       # Create APK Release
-      - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+      - name: Build apk release project (APK)
         run: ./gradlew assembleRelease
           ## Create Bundle AAB Release
           ## Noted for main module build [main_project_module]:bundleRelease
@@ -79,3 +79,28 @@ jobs:
         with:
           name: release
           path: app/build/outputs/apk/release/app-release-unsigned.apk
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs:
+      - build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+      - name: Show files
+        run: |
+            pwd
+            find
+      - name: Copy files
+        run: |
+          mkdir out
+          mv debug/app-debug.apk out/debug/popandpipi-debug.apk
+          mv release.app-release-unsigned.apk out/release out/release/popandpipi.apk
+          cd out
+          sha256sum * > sha256sum
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+            files: out/*
+            draft: true
